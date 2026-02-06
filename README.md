@@ -44,22 +44,16 @@ requirements.txt
    ```bash
    cp config.example.yml config.yml
    ```
-3. Set your sheet destination in `config.yml` under `sheets`:
-   ```yaml
-   sheets:
-     spreadsheet_id: "300411b4281dd5f8b203bc36433a58e2be11e4e337fc641e0540eb48393a090a"
-     worksheet_name: Jobs_AU
-   ```
-4. Set environment variables:
+3. Set environment variables:
    ```bash
    export SERPAPI_API_KEY=your_key
    ```
-5. Configure Google Sheets credentials:
+4. Configure Google Sheets credentials:
    - Create a GCP project and enable **Google Sheets API**.
    - Create a **Service Account** and download JSON key.
    - Save it at `./credentials/service_account.json` (or update `credentials_path`).
    - Share your target spreadsheet with the service account email as Editor.
-   - Set `sheets.spreadsheet_id` to `300411b4281dd5f8b203bc36433a58e2be11e4e337fc641e0540eb48393a090a` and tab to `Jobs_AU`.
+   - Set `sheets.spreadsheet_id` to `<SPREADSHEET_ID>` and tab to `Jobs_AU`.
 
 ## Run
 ```bash
