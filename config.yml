@@ -1,0 +1,43 @@
+search:
+  keywords:
+    - Data Analyst
+    - Customer Service
+    - Hydraulic Engineer
+  locations:
+    - Australia
+    - Melbourne VIC
+  job_type: Full-time
+  date_posted_days: 7
+  remote: Hybrid
+
+sources:
+  Seek:
+    enabled: true
+    provider: compliant_partner_feed_required
+    api_key_env: SEEK_API_KEY
+  Indeed:
+    enabled: true
+    provider: serpapi
+    api_key_env: SERPAPI_API_KEY
+  Jora:
+    enabled: true
+    provider: serpapi
+    api_key_env: SERPAPI_API_KEY
+  GoogleJobs:
+    enabled: true
+    provider: serpapi
+    api_key_env: SERPAPI_API_KEY
+  LinkedIn:
+    enabled: true
+    provider: serpapi_google_jobs
+    api_key_env: SERPAPI_API_KEY
+
+local_excel:
+  enabled: true
+  file_path: ./output/jobs_au.xlsx
+  worksheet_name: Jobs_AU
+
+request_timeout_seconds: 30
+retries: 3
+backoff_base_seconds: 1.0
+fuzzy_similarity_threshold: 0.90
