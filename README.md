@@ -1,6 +1,6 @@
 # AU Job Aggregator (Compliant Sources)
 
-Collects Australian jobs from Seek, Indeed, Jora, Google Jobs, and LinkedIn using compliant access (API/provider feeds only), deduplicates results, and upserts into a local Excel file (`.xlsx`).
+Collects Australian jobs from Seek, Indeed, Jora, Google Jobs, and LinkedIn using compliant access (API/provider feeds only), deduplicates results, and upserts into Google Sheets.
 
 ## Features
 - Source adapters with compliance-first behavior:
@@ -9,7 +9,7 @@ Collects Australian jobs from Seek, Indeed, Jora, Google Jobs, and LinkedIn usin
 - Filters to AU-only jobs.
 - Salary parsing (range/single value), with fallback to `Not listed` when unavailable.
 - Canonical and fuzzy dedupe across sources.
-- Local Excel upsert by `canonical_key` (default output target).
+- Google Sheets upsert by `canonical_key`.
 - Retry with exponential backoff and per-source run summary.
 - CLI-ready for local runs, cron, GitHub Actions, or Cloud Run.
 
@@ -19,10 +19,8 @@ Collects Australian jobs from Seek, Indeed, Jora, Google Jobs, and LinkedIn usin
 src/job_aggregator/
   cli.py
   config.py
-  excel.py
   models.py
   pipeline.py
-  runtime.py
   sheets.py
   utils.py
   sources/
@@ -30,7 +28,6 @@ src/job_aggregator/
     seek_source.py
     serpapi_source.py
 tests/
-  test_runtime.py
   test_utils.py
 config.example.yml
 requirements.txt
@@ -47,26 +44,21 @@ requirements.txt
    ```bash
    cp config.example.yml config.yml
    ```
-3. Set local Excel destination in `config.yml`:
-   ```yaml
-   local_excel:
-     enabled: true
-     file_path: ./output/jobs_au.xlsx
-     worksheet_name: Jobs_AU
-   ```
-4. Set environment variables (this is your **SerpAPI key**, not your spreadsheet ID):
+3. Set environment variables:
    ```bash
-   export SERPAPI_API_KEY=your_serpapi_key
+   export SERPAPI_API_KEY=your_key
    ```
-   If not set, the CLI will prompt you for missing API keys at runtime.
+4. Configure Google Sheets credentials:
+   - Create a GCP project and enable **Google Sheets API**.
+   - Create a **Service Account** and download JSON key.
+   - Save it at `./credentials/service_account.json` (or update `credentials_path`).
+   - Share your target spreadsheet with the service account email as Editor.
+   - Set `sheets.spreadsheet_id` to `<SPREADSHEET_ID>` and tab to `Jobs_AU`.
 
 ## Run
 ```bash
 PYTHONPATH=src python -m job_aggregator.cli --config config.yml
 ```
-
-On startup, the CLI prompts for any missing source API keys.
-Output is written to local Excel file: `./output/jobs_au.xlsx` (sheet/tab `Jobs_AU`).
 
 The CLI prints a run summary:
 - `total_fetched`, `total_kept_au`, `total_with_salary`, `total_deduped`, `total_written`, `total_updated`

@@ -32,10 +32,10 @@ sources:
     provider: serpapi_google_jobs
     api_key_env: SERPAPI_API_KEY
 
-local_excel:
-  enabled: true
-  file_path: ./output/jobs_au.xlsx
+sheets:
+  spreadsheet_id: "<SPREADSHEET_ID>"
   worksheet_name: Jobs_AU
+  credentials_path: ./credentials/service_account.json
 
 request_timeout_seconds: 30
 retries: 3

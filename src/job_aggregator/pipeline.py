@@ -7,7 +7,6 @@ from datetime import datetime
 
 from .config import AppConfig
 from .models import JobListing
-from .excel import LocalExcelWriter
 from .sheets import GoogleSheetsWriter
 from .sources.seek_source import SeekSource
 from .sources.serpapi_source import SerpApiSource
@@ -110,15 +109,7 @@ def run_pipeline(config: AppConfig) -> RunSummary:
             job.salary_raw_text = "Not listed"
         job.date_fetched = datetime.utcnow().isoformat()
 
-    if config.local_excel and config.local_excel.enabled:
-        writer = LocalExcelWriter(
-            file_path=config.local_excel.file_path,
-            worksheet_name=config.local_excel.worksheet_name,
-        )
-        inserted, updated = writer.upsert_jobs(deduped)
-        summary.total_written = inserted
-        summary.total_updated = updated
-    elif config.sheets:
+    if config.sheets:
         writer = GoogleSheetsWriter(
             spreadsheet_id=config.sheets.spreadsheet_id,
             worksheet_name=config.sheets.worksheet_name,

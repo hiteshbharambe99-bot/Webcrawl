@@ -1,17 +1,11 @@
 import os
 from pathlib import Path
 
-from job_aggregator.config import (
-    AppConfig,
-    GoogleSheetsConfig,
-    LocalExcelConfig,
-    SearchConfig,
-    SourceConfig,
-)
+from job_aggregator.config import AppConfig, GoogleSheetsConfig, SearchConfig, SourceConfig
 from job_aggregator.runtime import prepare_runtime_config
 
 
-def build_cfg(tmp_path: Path, local_excel_enabled: bool = False) -> AppConfig:
+def build_cfg(tmp_path: Path) -> AppConfig:
     return AppConfig(
         search=SearchConfig(keywords=["Data Analyst"], locations=["Australia"]),
         sources={
@@ -22,7 +16,6 @@ def build_cfg(tmp_path: Path, local_excel_enabled: bool = False) -> AppConfig:
             worksheet_name="Jobs_AU",
             credentials_path=str(tmp_path / "missing.json"),
         ),
-        local_excel=LocalExcelConfig(enabled=local_excel_enabled, file_path=str(tmp_path / "jobs.xlsx")),
     )
 
 
@@ -38,7 +31,7 @@ def test_prepare_runtime_prompts_for_api_key(monkeypatch, tmp_path):
 
 
 def test_prepare_runtime_disables_sheets_when_missing_credentials(monkeypatch, tmp_path):
-    cfg = build_cfg(tmp_path, local_excel_enabled=False)
+    cfg = build_cfg(tmp_path)
     monkeypatch.setenv("SERPAPI_API_KEY", "abc123")
     monkeypatch.setattr("builtins.input", lambda _: "")
 
@@ -47,7 +40,7 @@ def test_prepare_runtime_disables_sheets_when_missing_credentials(monkeypatch, t
 
 
 def test_prepare_runtime_accepts_override_credentials_path(monkeypatch, tmp_path):
-    cfg = build_cfg(tmp_path, local_excel_enabled=False)
+    cfg = build_cfg(tmp_path)
     cred_file = tmp_path / "service_account.json"
     cred_file.write_text("{}")
 
@@ -57,11 +50,3 @@ def test_prepare_runtime_accepts_override_credentials_path(monkeypatch, tmp_path
     prepare_runtime_config(cfg)
     assert cfg.sheets is not None
     assert cfg.sheets.credentials_path == str(cred_file)
-
-
-def test_prepare_runtime_skips_google_prompt_when_local_excel_enabled(monkeypatch, tmp_path):
-    cfg = build_cfg(tmp_path, local_excel_enabled=True)
-    monkeypatch.setenv("SERPAPI_API_KEY", "abc123")
-
-    prepare_runtime_config(cfg)
-    assert cfg.sheets is not None

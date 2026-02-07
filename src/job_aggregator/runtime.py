@@ -38,10 +38,6 @@ def prepare_runtime_config(config: AppConfig) -> None:
                 source_cfg.api_key_env,
             )
 
-    # Local Excel is preferred; when enabled we do not require Google Sheets credentials.
-    if config.local_excel and config.local_excel.enabled:
-        return
-
     if not config.sheets:
         return
 
