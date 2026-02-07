@@ -41,15 +41,13 @@ class SerpApiSource(SourceClient):
                 "location": (config.search.locations or ["Australia"])[0],
                 "api_key": api_key,
             }
-            if config.search.date_posted_days and engine == "google_jobs":
-                # `chips=date_posted:` is supported in google_jobs results.
+            if config.search.date_posted_days:
                 params["chips"] = f"date_posted:{config.search.date_posted_days}"
 
             import requests
 
             resp = requests.get("https://serpapi.com/search", params=params, timeout=config.request_timeout_seconds)
-            if resp.status_code >= 400:
-                raise RuntimeError(f"{self.source_name} SerpAPI error {resp.status_code}: {resp.text[:300]}")
+            resp.raise_for_status()
             payload = resp.json()
             items = payload.get("jobs_results") or payload.get("organic_results") or []
             for item in items:

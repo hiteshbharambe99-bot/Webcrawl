@@ -44,31 +44,21 @@ requirements.txt
    ```bash
    cp config.example.yml config.yml
    ```
-3. Set your sheet destination in `config.yml` under `sheets`:
-   ```yaml
-   sheets:
-     spreadsheet_id: "300411b4281dd5f8b203bc36433a58e2be11e4e337fc641e0540eb48393a090a"
-     worksheet_name: Jobs_AU
-   ```
-4. Set environment variables (this is your **SerpAPI key**, not your spreadsheet ID):
+3. Set environment variables:
    ```bash
-   export SERPAPI_API_KEY=your_serpapi_key
+   export SERPAPI_API_KEY=your_key
    ```
-   If not set, the CLI will prompt you for missing API keys at runtime.
-5. Configure Google Sheets credentials:
+4. Configure Google Sheets credentials:
    - Create a GCP project and enable **Google Sheets API**.
    - Create a **Service Account** and download JSON key.
    - Save it at `./credentials/service_account.json` (or update `credentials_path`).
    - Share your target spreadsheet with the service account email as Editor.
-   - Set `sheets.spreadsheet_id` to `300411b4281dd5f8b203bc36433a58e2be11e4e337fc641e0540eb48393a090a` and tab to `Jobs_AU`.
+   - Set `sheets.spreadsheet_id` to `<SPREADSHEET_ID>` and tab to `Jobs_AU`.
 
 ## Run
 ```bash
 PYTHONPATH=src python -m job_aggregator.cli --config config.yml
 ```
-
-On startup, the CLI now prompts for any missing source API keys and for a missing Google service-account file path.
-If credentials are not provided, it continues and skips Google Sheets writes for that run.
 
 The CLI prints a run summary:
 - `total_fetched`, `total_kept_au`, `total_with_salary`, `total_deduped`, `total_written`, `total_updated`
